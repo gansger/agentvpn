@@ -17,6 +17,7 @@ Mini App и панель администратора никогда не обр
 - Добавлена contract-проверка сохранённой OpenAPI-схемы.
 - Проект Stitch зафиксирован как источник дизайна Mini App.
 - Зафиксировано production-размещение на двух отдельных серверах.
+- Реализованы typed 3x-ui API client и `ThreeXUIProvisioningProvider`.
 
 Endpoints и форматы запросов 3x-ui не придумывались. Перед реализацией
 `ThreeXUIProvisioningProvider` файл `docs/3x-ui-openapi.json` должен быть получен из
@@ -63,6 +64,26 @@ python -B -m unittest discover -s tests -p "test_*.py"
 ограничивает размер ответа, проверяет JSON и атомарно сохраняет snapshot схемы. Скрипт
 автоматически читает `.env` из корня проекта, не переопределяя переменные окружения,
 заданные системой.
+
+## Проверка подключения к 3x-ui
+
+На APP-SERVER создайте Python-окружение и установите проект:
+
+```bash
+cd /opt/agentvpn
+python3 -m venv .venv
+.venv/bin/pip install --upgrade pip
+.venv/bin/pip install -e .
+```
+
+Затем выполните безопасную read-only проверку:
+
+```bash
+.venv/bin/python infrastructure/scripts/check_xui_connection.py
+```
+
+Проверка получает состояние Xray и валидирует настроенные Hysteria2 и VLESS REALITY
+inbound. Она не создаёт и не изменяет клиентов.
 
 ## Данные, необходимые от владельца
 
