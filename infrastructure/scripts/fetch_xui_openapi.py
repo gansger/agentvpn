@@ -18,12 +18,37 @@ from urllib.request import Request, urlopen
 MAX_SCHEMA_BYTES: Final = 10 * 1024 * 1024
 DEFAULT_OPENAPI_PATH: Final = "/panel/api/openapi.json"
 OUTPUT_PATH: Final = Path(__file__).resolve().parents[2] / "docs" / "3x-ui-openapi.json"
+ENV_PATH: Final = Path(__file__).resolve().parents[2] / ".env"
 
 
 class ReadableResponse(Protocol):
     headers: Message
 
     def read(self, amt: int = -1) -> bytes: ...
+
+
+def load_env_file(path: Path = ENV_PATH) -> None:
+    """Load simple KEY=VALUE entries without overriding process environment variables."""
+    if not path.exists():
+        return
+
+    for line_number, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line.removeprefix("export ").lstrip()
+        if "=" not in line:
+            raise ValueError(f"Invalid .env entry on line {line_number}")
+
+        name, value = line.split("=", 1)
+        name = name.strip()
+        value = value.strip()
+        if not name or not name.replace("_", "").isalnum() or name[0].isdigit():
+            raise ValueError(f"Invalid .env variable name on line {line_number}")
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        os.environ.setdefault(name, value)
 
 
 def env_bool(name: str, default: bool) -> bool:
@@ -104,6 +129,12 @@ def write_atomically(document: dict[str, object]) -> str:
 
 
 def main() -> int:
+    try:
+        load_env_file()
+    except (OSError, UnicodeError, ValueError) as exc:
+        print(f"Unable to load .env: {exc}", file=sys.stderr)
+        return 2
+
     base_url = os.getenv("XUI_BASE_URL", "").strip()
     if not base_url:
         print("XUI_BASE_URL is required", file=sys.stderr)

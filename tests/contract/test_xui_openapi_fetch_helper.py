@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 SCRIPT = (
     Path(__file__).resolve().parents[2] / "infrastructure" / "scripts" / "fetch_xui_openapi.py"
@@ -15,6 +17,35 @@ SPEC.loader.exec_module(fetch_xui_openapi)
 
 
 class XuiOpenApiFetchHelperTest(unittest.TestCase):
+    def test_load_env_file_reads_values_without_overriding_environment(self) -> None:
+        env_path = Path("fixture.env")
+        with (
+            patch.object(Path, "exists", return_value=True),
+            patch.object(
+                Path,
+                "read_text",
+                return_value=(
+                    "XUI_BASE_URL=https://vpn.example.com\n"
+                    "XUI_USERNAME=file-user\n"
+                    "# comment\n"
+                ),
+            ),
+            patch.dict(os.environ, {"XUI_USERNAME": "process-user"}, clear=True),
+        ):
+            fetch_xui_openapi.load_env_file(env_path)
+
+            self.assertEqual(os.environ["XUI_BASE_URL"], "https://vpn.example.com")
+            self.assertEqual(os.environ["XUI_USERNAME"], "process-user")
+
+    def test_load_env_file_rejects_invalid_entries(self) -> None:
+        env_path = Path("fixture.env")
+        with (
+            patch.object(Path, "exists", return_value=True),
+            patch.object(Path, "read_text", return_value="not-an-assignment\n"),
+        ):
+            with self.assertRaises(ValueError):
+                fetch_xui_openapi.load_env_file(env_path)
+
     def test_schema_url_preserves_panel_base_path(self) -> None:
         result = fetch_xui_openapi.build_schema_url(
             "https://vpn.example.com/secret-panel/",
@@ -47,4 +78,3 @@ class XuiOpenApiFetchHelperTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
