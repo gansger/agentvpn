@@ -1,24 +1,23 @@
-# Stage 1 Owner Actions
+# Ручные действия владельца для Этапа 1
 
-## Required Before 3x-ui Adapter Development
+## Перед разработкой адаптера 3x-ui
 
-1. Assign a fixed public IP to the AGentVPN application server.
-2. Restrict the 3x-ui panel to that AGentVPN server IP.
-3. Keep only the required public VPN ports available to VPN users.
-4. Ensure the panel uses a valid HTTPS certificate.
-5. Fill local `.env` values for `XUI_BASE_URL` and the supported authentication method.
-6. Fill `XUI_HYSTERIA2_INBOUND_ID` and `XUI_VLESS_REALITY_INBOUND_ID`.
-7. Run `python infrastructure/scripts/fetch_xui_openapi.py`.
-8. Review `docs/3x-ui-openapi.json` for the installed version and confirm it contains no
-   secrets or live client data.
-9. Run the contract test.
+1. Назначьте фиксированный публичный IP серверу AGentVPN.
+2. Ограничьте доступ к панели 3x-ui этим IP-адресом.
+3. Оставьте публичными только необходимые пользовательские VPN-порты.
+4. Убедитесь, что панель использует действующий HTTPS-сертификат.
+5. Заполните локальный `.env`: `XUI_BASE_URL` и поддерживаемый способ авторизации.
+6. Заполните `XUI_HYSTERIA2_INBOUND_ID` и `XUI_VLESS_REALITY_INBOUND_ID`.
+7. Выполните `python infrastructure/scripts/fetch_xui_openapi.py`.
+8. Проверьте `docs/3x-ui-openapi.json`: в нём не должно быть секретов и данных клиентов.
+9. Запустите contract-тесты.
 
-Do not send passwords, API tokens, webhook keys, or bot tokens in chat.
+Не отправляйте пароли, API-токены, webhook-ключи и токены Telegram-бота в чат.
 
-## Required Before Payment Development
+## Перед разработкой платежей
 
-1. Configure the public domain.
-2. Configure Telegram bot token locally.
-3. Configure ENOT shop ID and secrets locally.
-4. Confirm the active SBP method for the shop and set its actual code.
-5. Configure Happ Provider ID only if owned and required.
+1. Настройте публичный домен.
+2. Локально настройте токен Telegram-бота.
+3. Локально настройте ENOT Shop ID и секреты.
+4. Подтвердите активный метод СБП магазина и укажите его фактический код.
+5. Укажите Happ Provider ID только если он принадлежит проекту и действительно требуется.

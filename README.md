@@ -4,8 +4,8 @@ Production-oriented Telegram-бот и Mini App для продажи VPN-дос
 существующую установку 3x-ui. Центральный backend является источником истины. Telegram-бот,
 Mini App и панель администратора никогда не обращаются к 3x-ui или ENOT напрямую.
 
-Текущее состояние репозитория соответствует **Этапу 1: архитектура и исследование
-интеграций**.
+Текущее состояние репозитория соответствует **Этапу 2: backend-основа, база данных и
+безопасная Telegram-аутентификация**.
 
 ## Текущее состояние
 
@@ -18,10 +18,16 @@ Mini App и панель администратора никогда не обр
 - Проект Stitch зафиксирован как источник дизайна Mini App.
 - Зафиксировано production-размещение на двух отдельных серверах.
 - Реализованы typed 3x-ui API client и `ThreeXUIProvisioningProvider`.
+- Для всех создаваемых и обновляемых Hysteria2/VLESS-клиентов принудительно используется
+  `flow=xtls-rprx-vision`.
+- Реализован FastAPI backend с health/readiness endpoints.
+- Реализована проверка Telegram Mini App `initData`, защита от повторного использования,
+  Redis-сессии и CSRF.
+- Добавлены SQLAlchemy-модели и начальная Alembic-миграция PostgreSQL.
+- Добавлен production Docker Compose: PostgreSQL, Redis, миграции, API и Caddy.
 
-Endpoints и форматы запросов 3x-ui не придумывались. Перед реализацией
-`ThreeXUIProvisioningProvider` файл `docs/3x-ui-openapi.json` должен быть получен из
-фактически установленной панели.
+Endpoints и форматы запросов 3x-ui взяты из OpenAPI фактически установленной панели и
+зафиксированы в `docs/3x-ui-openapi.json`.
 
 ## Структура репозитория
 
@@ -44,16 +50,18 @@ tests/
   contract/            Проверки контрактов внешних систем
 ```
 
-## Проверка Этапа 1
+## Проверка проекта
 
 Используйте Python 3.12 или новее:
 
 ```powershell
 python -B -m unittest discover -s tests -p "test_*.py"
 python -B infrastructure/scripts/check_python_syntax.py
+ruff check .
+mypy apps infrastructure tests
 ```
 
-После того как владелец локально настроит `XUI_BASE_URL` и переменные авторизации:
+После локальной настройки `XUI_BASE_URL` и переменных авторизации:
 
 ```powershell
 python infrastructure/scripts/fetch_xui_openapi.py
@@ -99,7 +107,8 @@ inbound. Она не создаёт и не изменяет клиентов.
 - Happ Provider ID, только если проект владеет им и использует его.
 
 Подробности находятся в
-[инструкции по ручным действиям Этапа 1](docs/runbooks/stage-1-owner-actions.md).
+[инструкции по ручным действиям Этапа 1](docs/runbooks/stage-1-owner-actions.md) и
+[инструкции развёртывания Этапа 2](docs/runbooks/stage-2-app-server-deployment.md).
 
 ## Production-размещение
 

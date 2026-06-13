@@ -190,9 +190,7 @@ class ThreeXUIApiClient:
         return sanitized[:200]
 
     async def health_check(self) -> XuiServerStatus:
-        envelope = await self._request(
-            "GET", "/panel/api/server/status", safe_to_retry=True
-        )
+        envelope = await self._request("GET", "/panel/api/server/status", safe_to_retry=True)
         return XuiServerStatus.model_validate(envelope.obj)
 
     async def get_inbound(self, inbound_id: int) -> XuiInbound:
@@ -271,9 +269,7 @@ class ThreeXUIApiClient:
         return envelope.obj
 
     async def list_online_clients(self) -> list[str]:
-        envelope = await self._request(
-            "POST", "/panel/api/clients/onlines", safe_to_retry=True
-        )
+        envelope = await self._request("POST", "/panel/api/clients/onlines", safe_to_retry=True)
         if not isinstance(envelope.obj, list) or not all(
             isinstance(email, str) for email in envelope.obj
         ):

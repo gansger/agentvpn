@@ -1,0 +1,66 @@
+"""FastAPI application factory."""
+
+from __future__ import annotations
+
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from redis.asyncio import Redis
+
+from apps.api.agentvpn_api.auth.sessions import SessionStore
+from apps.api.agentvpn_api.config import AppSettings
+from apps.api.agentvpn_api.database.session import Database
+from apps.api.agentvpn_api.logging import configure_logging
+from apps.api.agentvpn_api.routers import auth, health
+from apps.api.agentvpn_api.security import SecurityHeadersMiddleware
+
+
+def create_app() -> FastAPI:
+    settings = AppSettings()  # type: ignore[call-arg]
+    configure_logging()
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        database = Database(
+            settings.database_url.get_secret_value(),
+            pool_size=settings.db_pool_size,
+            max_overflow=settings.db_max_overflow,
+        )
+        redis = Redis.from_url(
+            settings.redis_url.get_secret_value(),
+            decode_responses=True,
+        )
+        app.state.settings = settings
+        app.state.database = database
+        app.state.redis = redis
+        app.state.session_store = SessionStore(
+            redis,
+            session_secret=settings.session_secret.get_secret_value(),
+            csrf_secret=settings.csrf_secret.get_secret_value(),
+            session_ttl_seconds=settings.session_ttl_seconds,
+            replay_ttl_seconds=settings.telegram_replay_ttl_seconds,
+        )
+        yield
+        await redis.aclose()
+        await database.dispose()
+
+    app = FastAPI(
+        title="AGentVPN API",
+        version="0.2.0",
+        docs_url=None if settings.app_env == "production" else "/docs",
+        redoc_url=None,
+        lifespan=lifespan,
+    )
+    app.add_middleware(SecurityHeadersMiddleware)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.allowed_origins,
+        allow_credentials=True,
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type", "X-CSRF-Token"],
+    )
+    app.include_router(health.router)
+    app.include_router(auth.router)
+    return app

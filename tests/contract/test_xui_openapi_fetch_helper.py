@@ -6,9 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-SCRIPT = (
-    Path(__file__).resolve().parents[2] / "infrastructure" / "scripts" / "fetch_xui_openapi.py"
-)
+SCRIPT = Path(__file__).resolve().parents[2] / "infrastructure" / "scripts" / "fetch_xui_openapi.py"
 SPEC = importlib.util.spec_from_file_location("fetch_xui_openapi", SCRIPT)
 if SPEC is None or SPEC.loader is None:
     raise RuntimeError("Unable to load fetch_xui_openapi helper")
@@ -25,9 +23,7 @@ class XuiOpenApiFetchHelperTest(unittest.TestCase):
                 Path,
                 "read_text",
                 return_value=(
-                    "XUI_BASE_URL=https://vpn.example.com\n"
-                    "XUI_USERNAME=file-user\n"
-                    "# comment\n"
+                    "XUI_BASE_URL=https://vpn.example.com\nXUI_USERNAME=file-user\n# comment\n"
                 ),
             ),
             patch.dict(os.environ, {"XUI_USERNAME": "process-user"}, clear=True),

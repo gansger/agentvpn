@@ -43,4 +43,3 @@ class ClientTraffic:
     total_bytes: int
     upload_bytes: int
     download_bytes: int
-

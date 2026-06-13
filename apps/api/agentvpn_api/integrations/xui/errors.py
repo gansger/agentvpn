@@ -29,4 +29,3 @@ class XuiContractError(XuiError):
 
 class XuiInboundValidationError(XuiError):
     """Configured inbound is unavailable or has an unexpected protocol."""
-
