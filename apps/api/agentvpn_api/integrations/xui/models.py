@@ -7,6 +7,8 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+REQUIRED_CLIENT_FLOW = "xtls-rprx-vision"
+
 
 class ApiEnvelope[T](BaseModel):
     model_config = ConfigDict(extra="allow")
@@ -73,6 +75,7 @@ class XuiClientCreate(BaseModel):
     total_bytes: int = Field(default=0, alias="totalGB")
     ip_limit: int = Field(default=0, alias="limitIp")
     telegram_id: int = Field(default=0, alias="tgId")
+    flow: str = REQUIRED_CLIENT_FLOW
     comment: str | None = None
 
     @field_validator("expiry_time_ms", "total_bytes", "ip_limit")

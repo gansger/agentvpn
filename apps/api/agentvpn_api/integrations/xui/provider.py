@@ -11,6 +11,7 @@ from apps.api.agentvpn_api.integrations.xui.errors import (
     XuiInboundValidationError,
 )
 from apps.api.agentvpn_api.integrations.xui.models import (
+    REQUIRED_CLIENT_FLOW,
     XuiClientCreate,
     XuiClientRecord,
     XuiClientTraffic,
@@ -95,6 +96,11 @@ class ThreeXUIProvisioningProvider:
 
         existing = await self._client.get_client(external_email)
         if existing is not None:
+            if existing.flow != REQUIRED_CLIENT_FLOW:
+                await self._client.update_client(
+                    external_email,
+                    existing.full_update_payload(flow=REQUIRED_CLIENT_FLOW),
+                )
             if inbound_id not in existing.inbound_ids:
                 await self._client.attach_client(external_email, [inbound_id])
             return self._to_domain_client(await self._verify_binding(external_email, inbound_id))
@@ -119,6 +125,8 @@ class ThreeXUIProvisioningProvider:
     ) -> ProvisionedClient:
         current = await self._require_client(external_email)
         changes: dict[str, object] = {}
+        if current.flow != REQUIRED_CLIENT_FLOW:
+            changes["flow"] = REQUIRED_CLIENT_FLOW
         if expires_at is not None:
             changes["expiryTime"] = datetime_to_epoch_ms(expires_at)
         if traffic_limit_bytes is not None:

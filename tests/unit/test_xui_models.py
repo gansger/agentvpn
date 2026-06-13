@@ -4,12 +4,19 @@ import unittest
 from datetime import UTC, datetime
 
 from apps.api.agentvpn_api.integrations.xui.models import (
+    REQUIRED_CLIENT_FLOW,
+    XuiClientCreate,
     XuiClientRecord,
     datetime_to_epoch_ms,
 )
 
 
 class XuiModelsTest(unittest.TestCase):
+    def test_create_model_defaults_to_required_flow(self) -> None:
+        client = XuiClientCreate(email="tg_1_2_hysteria2", expiryTime=0)
+
+        self.assertEqual(client.flow, REQUIRED_CLIENT_FLOW)
+
     def test_datetime_to_epoch_ms_uses_utc_milliseconds(self) -> None:
         value = datetime(2026, 1, 1, tzinfo=UTC)
 
@@ -49,4 +56,3 @@ class XuiModelsTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
