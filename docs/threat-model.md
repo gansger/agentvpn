@@ -14,7 +14,7 @@
 | Threat | Impact | Initial controls |
 |---|---|---|
 | Forged Telegram initData | Account takeover | Server-side HMAC validation, `auth_date` limit, replay cache |
-| Forged or replayed ENOT webhook | Free or duplicate access | Raw-body HMAC validation, constant-time compare, event uniqueness, payment row lock, amount/order/currency checks |
+| Forged or replayed ENOT webhook | Free or duplicate access | ENOT canonical JSON HMAC validation, constant-time compare, event uniqueness, payment row lock, amount/order/currency checks |
 | Frontend claims successful payment | Free access | Ignore frontend payment result; activate only from verified webhook |
 | Duplicate provisioning | Multiple 3x-ui clients | Stable external IDs, verify-before-create, advisory locks, no blind create retries |
 | Partial two-protocol provisioning | Broken subscription presented as active | `partial_failed`, background resync, verification of both bindings, manual review threshold |
@@ -56,8 +56,7 @@ ownership checks, payment validation, token creation, and provisioning remain se
 ## Residual Risks To Validate
 
 - Exact 3x-ui authentication and API semantics depend on the installed OpenAPI schema.
-- ENOT webhook signature canonicalization must be confirmed against current provider docs
-  and staging events before production.
+- ENOT webhook signature canonicalization follows the current provider example and must
+  also be confirmed against the first signed staging event before production sales.
 - Happ deep links and Provider ID behavior must be confirmed from official documentation.
 - Telegram Mini App framing headers must be tested in Telegram clients before deployment.
-

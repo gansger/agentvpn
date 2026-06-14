@@ -27,6 +27,6 @@ class InvoiceRequest:
 @dataclass(frozen=True, slots=True)
 class ProviderInvoice:
     provider_invoice_id: str
-    payment_url: str
+    payment_url: str | None
     status: ProviderPaymentStatus
     sanitized_payload: dict[str, Any] = field(default_factory=dict)

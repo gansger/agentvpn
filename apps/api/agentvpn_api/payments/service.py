@@ -183,7 +183,7 @@ async def activate_successful_payment(
     session.add(
         AuditLog(
             actor_type=ActorType.SYSTEM,
-            actor_id="mock-payment",
+            actor_id=f"{payment.provider}-payment",
             action="payment.activated",
             entity_type="payment",
             entity_id=str(payment.id),

@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from apps.api.agentvpn_api.auth.sessions import SessionStore
 from apps.api.agentvpn_api.config import AppSettings
 from apps.api.agentvpn_api.database.session import Database
+from apps.api.agentvpn_api.payments.enot import EnotPaymentProvider
 from apps.api.agentvpn_api.payments.mock import MockPaymentProvider
 
 
@@ -29,6 +30,10 @@ def session_store_from(request: Request) -> SessionStore:
 
 def mock_payment_provider_from(request: Request) -> MockPaymentProvider:
     return cast(MockPaymentProvider, request.app.state.mock_payment_provider)
+
+
+def enot_payment_provider_from(request: Request) -> EnotPaymentProvider | None:
+    return cast(EnotPaymentProvider | None, request.app.state.enot_payment_provider)
 
 
 async def database_session(request: Request) -> AsyncIterator[AsyncSession]:
