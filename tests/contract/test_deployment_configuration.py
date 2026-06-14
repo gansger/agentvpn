@@ -8,6 +8,7 @@ COMPOSE_FILE = Path("docker-compose.yml")
 PUBLIC_INDEX = Path("apps/mini-app/public/index.html")
 PUBLIC_CSS = Path("apps/mini-app/public/app.css")
 PUBLIC_JS = Path("apps/mini-app/public/app.js")
+PUBLIC_LOGO = Path("apps/mini-app/public/logo.png")
 MIGRATION_COMPOSE_FILE = Path("infrastructure/testing/migration-compose.yml")
 MIGRATION_SCRIPT = Path("infrastructure/scripts/test_clean_postgres_migrations.sh")
 
@@ -40,8 +41,10 @@ class DeploymentConfigurationTest(unittest.TestCase):
     def test_public_site_contains_moderation_and_mini_app_content(self) -> None:
         content = PUBLIC_INDEX.read_text(encoding="utf-8")
 
-        for path in (PUBLIC_CSS, PUBLIC_JS):
+        for path in (PUBLIC_CSS, PUBLIC_JS, PUBLIC_LOGO):
             self.assertTrue(path.is_file())
+        body = content.split("<body>", maxsplit=1)[1]
+        self.assertNotIn("ENOT", body)
         for text in (
             "Оплата через СБП",
             "Условия оказания услуг",
