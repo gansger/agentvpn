@@ -5,6 +5,7 @@ from pathlib import Path
 
 CADDYFILE = Path("infrastructure/reverse-proxy/Caddyfile")
 COMPOSE_FILE = Path("docker-compose.yml")
+PUBLIC_INDEX = Path("apps/mini-app/public/index.html")
 MIGRATION_COMPOSE_FILE = Path("infrastructure/testing/migration-compose.yml")
 MIGRATION_SCRIPT = Path("infrastructure/scripts/test_clean_postgres_migrations.sh")
 
@@ -23,7 +24,14 @@ class DeploymentConfigurationTest(unittest.TestCase):
         for volume in ("postgres_data:", "redis_data:", "caddy_data:", "caddy_config:"):
             self.assertIn(volume, content)
         self.assertIn('"caddy", "validate"', content)
+        self.assertIn("./apps/mini-app/public:/srv/agentvpn-public:ro", content)
         self.assertNotIn("down -v", content)
+
+    def test_public_homepage_contains_enot_verification_inside_head(self) -> None:
+        content = PUBLIC_INDEX.read_text(encoding="utf-8")
+        head = content.split("<head>", maxsplit=1)[1].split("</head>", maxsplit=1)[0]
+
+        self.assertIn('<meta name="enot" content="9bbe7724" />', head)
 
     def test_clean_migration_test_cannot_remove_production_volumes(self) -> None:
         compose = MIGRATION_COMPOSE_FILE.read_text(encoding="utf-8")

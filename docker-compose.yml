@@ -77,6 +77,7 @@ services:
       - "443:443/udp"
     volumes:
       - ./infrastructure/reverse-proxy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./apps/mini-app/public:/srv/agentvpn-public:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
