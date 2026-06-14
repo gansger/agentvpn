@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120" role="img" aria-labelledby="title">
+  <title id="title">Система быстрых платежей</title>
+  <rect width="320" height="120" rx="24" fill="#fff"/>
+  <g transform="translate(22 19)">
+    <path d="M42 0 84 42 42 84 0 42Z" fill="#8c3fff"/>
+    <path d="M42 12 72 42 42 72 12 42Z" fill="#08b1ae"/>
+    <path d="m31 29 26 13-26 13Z" fill="#fff"/>
+  </g>
+  <text x="126" y="54" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#10131a">СБП</text>
+  <text x="126" y="80" font-family="Arial, sans-serif" font-size="14" fill="#4f5665">Система быстрых платежей</text>
+</svg>

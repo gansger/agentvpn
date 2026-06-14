@@ -14,8 +14,23 @@ const fallbackPlans = [
 ];
 
 const telegram = window.Telegram?.WebApp;
+const publicInfo = window.AGENTVPN_PUBLIC_INFO || {};
+if (telegram?.initData) document.body.classList.add("telegram-mode");
 telegram?.ready();
 telegram?.expand();
+
+function populatePublicInfo() {
+  document.querySelectorAll("[data-public-field]").forEach((element) => {
+    const value = publicInfo[element.dataset.publicField];
+    element.textContent = value || "Требуется заполнить до публикации";
+    element.classList.toggle("missing-public-info", !value);
+  });
+  const supportEmail = document.querySelector("#mini-support-email");
+  if (supportEmail && publicInfo.supportEmail) {
+    supportEmail.href = `mailto:${publicInfo.supportEmail}`;
+    supportEmail.querySelector("small").textContent = publicInfo.supportEmail;
+  }
+}
 
 function money(value) {
   return `${Number(value).toLocaleString("ru-RU")} ₽`;
@@ -183,6 +198,20 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 }
 
+document.querySelector("#registration-form")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const status = document.querySelector("#registration-status");
+  if (!document.querySelector("#registration-consent")?.checked) {
+    status.textContent = "Для регистрации необходимо принять публичные документы.";
+    return;
+  }
+  if (!publicInfo.telegramUrl) {
+    status.textContent = "Ссылка на Telegram Mini App ещё не опубликована.";
+    return;
+  }
+  window.location.assign(publicInfo.telegramUrl);
+});
+
 document.querySelectorAll(".app-route").forEach((button) =>
   button.addEventListener("click", () => route(button.dataset.target)));
 document.querySelectorAll(".choose-plan").forEach((button) =>
@@ -198,3 +227,4 @@ document.querySelector("#check-payment")?.addEventListener("click", checkPayment
 
 loadPlans();
 authenticateTelegram();
+populatePublicInfo();
