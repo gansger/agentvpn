@@ -11,8 +11,8 @@ must remain consistent even when external systems are unavailable or send duplic
 ## Decision
 
 PostgreSQL in the central backend owns all business state. 3x-ui is used only as a
-provisioning engine. ENOT is queried and receives server-to-server requests, but verified
-webhooks are processed into local payment state before business actions occur.
+provisioning engine. Robokassa hosts checkout and sends signed ResultURL requests, but
+verified notifications are processed into local payment state before business actions occur.
 
 Mini App, bot, admin UI, and Happ clients communicate only with the central backend.
 
@@ -22,4 +22,3 @@ Mini App, bot, admin UI, and Happ clients communicate only with the central back
 - Reconciliation and retries are possible.
 - Provisioning requires an explicit local state machine.
 - The backend must protect strict ownership and idempotency boundaries.
-

@@ -12,7 +12,7 @@ mypy apps infrastructure tests
 ```
 
 Тест миграций создаёт отдельный Compose-проект с чистой PostgreSQL в `tmpfs`, выполняет
-`upgrade → Stage 3 checkout/idempotency → Stage 4 ENOT webhook/idempotency → downgrade base → upgrade`
+`upgrade → Stage 3 checkout/idempotency → Stage 4 Robokassa ResultURL/idempotency → downgrade base → upgrade`
 и не использует
 постоянные volumes:
 

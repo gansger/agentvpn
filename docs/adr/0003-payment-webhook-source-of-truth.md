@@ -10,8 +10,8 @@ cannot prove payment.
 
 ## Decision
 
-Access activation starts only after an ENOT webhook passes signature, event, invoice,
-order, amount, currency, and state-transition validation. Reconciliation can confirm
+Access activation starts only after a Robokassa ResultURL passes signature, invoice,
+order, amount, and state-transition validation. Reconciliation can confirm
 provider status but uses the same locked, idempotent activation service.
 
 ## Consequences
@@ -19,4 +19,3 @@ provider status but uses the same locked, idempotent activation service.
 - Successful redirects display a checking state rather than granting access.
 - Duplicate webhooks are harmless.
 - Provider signature behavior must be verified before production.
-

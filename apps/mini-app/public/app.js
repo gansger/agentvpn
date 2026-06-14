@@ -25,6 +25,11 @@ function populatePublicInfo() {
     element.textContent = value || "Требуется заполнить до публикации";
     element.classList.toggle("missing-public-info", !value);
   });
+  document.querySelectorAll("[data-public-link]").forEach((element) => {
+    const value = publicInfo[element.dataset.publicLink];
+    if (value) element.href = value;
+    element.classList.toggle("missing-public-info", !value);
+  });
   const supportEmail = document.querySelector("#mini-support-email");
   if (supportEmail && publicInfo.supportEmail) {
     supportEmail.href = `mailto:${publicInfo.supportEmail}`;
@@ -137,7 +142,7 @@ async function createCheckout() {
   button.disabled = true;
   button.textContent = "Создаём платёж…";
   try {
-    state.payment = await api("/api/checkout/enot", {
+    state.payment = await api("/api/checkout/robokassa", {
       method: "POST",
       headers: {
         "X-CSRF-Token": state.csrfToken,

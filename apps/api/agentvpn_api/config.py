@@ -37,14 +37,16 @@ class AppSettings(BaseSettings):
     session_cookie_samesite: Literal["lax", "strict", "none"] = "none"
     auth_rate_limit_per_minute: int = Field(default=20, ge=1, le=1000)
     enable_mock_payments: bool = False
-    enable_enot_payments: bool = False
+    enable_robokassa_payments: bool = False
 
-    enot_api_base_url: AnyHttpUrl = AnyHttpUrl("https://api.enot.io")
-    enot_shop_id: str | None = None
-    enot_secret_key: SecretStr | None = None
-    enot_webhook_additional_key: SecretStr | None = None
-    enot_sbp_service_code: Literal["sbp", "p2p_sbp"] = "sbp"
-    enot_payment_expire_minutes: int = Field(default=30, ge=1, le=7200)
+    robokassa_payment_url: AnyHttpUrl = AnyHttpUrl("https://auth.robokassa.ru/Merchant/Index.aspx")
+    robokassa_api_base_url: AnyHttpUrl = AnyHttpUrl("https://auth.robokassa.ru")
+    robokassa_merchant_login: str | None = None
+    robokassa_password_1: SecretStr | None = None
+    robokassa_password_2: SecretStr | None = None
+    robokassa_hash_algorithm: Literal["md5", "sha256", "sha512"] = "md5"
+    robokassa_sbp_method: Literal["SBP"] = "SBP"
+    robokassa_test_mode: bool = True
 
     @field_validator("admin_telegram_ids", mode="before")
     @classmethod
@@ -85,17 +87,27 @@ class AppSettings(BaseSettings):
             raise ValueError("COOKIE_SECURE must be true in production")
         if self.app_env == "production" and self.enable_mock_payments:
             raise ValueError("ENABLE_MOCK_PAYMENTS must be false in production")
-        if self.enable_enot_payments and not all(
-            (self.enot_shop_id, self.enot_secret_key, self.enot_webhook_additional_key)
+        if self.enable_robokassa_payments and not all(
+            (
+                self.robokassa_merchant_login,
+                self.robokassa_password_1,
+                self.robokassa_password_2,
+            )
         ):
             raise ValueError(
-                "ENOT_SHOP_ID, ENOT_SECRET_KEY and ENOT_WEBHOOK_ADDITIONAL_KEY "
-                "are required when ENABLE_ENOT_PAYMENTS=true"
+                "ROBOKASSA_MERCHANT_LOGIN, ROBOKASSA_PASSWORD_1 and ROBOKASSA_PASSWORD_2 "
+                "are required when ENABLE_ROBOKASSA_PAYMENTS=true"
             )
-        if self.app_env == "production" and self.enot_api_base_url.scheme != "https":
-            raise ValueError("ENOT_API_BASE_URL must use HTTPS in production")
-        if self.app_env == "production" and self.enot_api_base_url.host != "api.enot.io":
-            raise ValueError("ENOT_API_BASE_URL must use the official ENOT API host in production")
+        if self.app_env == "production" and (
+            self.robokassa_api_base_url.scheme != "https"
+            or self.robokassa_payment_url.scheme != "https"
+        ):
+            raise ValueError("Robokassa URLs must use HTTPS in production")
+        if self.app_env == "production" and (
+            self.robokassa_api_base_url.host != "auth.robokassa.ru"
+            or self.robokassa_payment_url.host != "auth.robokassa.ru"
+        ):
+            raise ValueError("Robokassa URLs must use the official host in production")
         return self
 
     @property
@@ -111,5 +123,5 @@ class AppSettings(BaseSettings):
         return f"https://{self.public_domain}"
 
     @property
-    def enot_webhook_url(self) -> str:
-        return f"{self.public_origin}/api/webhooks/enot"
+    def robokassa_result_url(self) -> str:
+        return f"{self.public_origin}/api/webhooks/robokassa/result"

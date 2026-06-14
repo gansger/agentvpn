@@ -48,8 +48,3 @@ class MockPaymentCompletionResponse(BaseModel):
     payment: PaymentResponse
     subscription: SubscriptionResponse
     activated_now: bool
-
-
-class EnotWebhookResponse(BaseModel):
-    status: str
-    duplicate: bool

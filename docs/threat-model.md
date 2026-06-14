@@ -2,7 +2,7 @@
 
 ## Protected Assets
 
-- 3x-ui and ENOT credentials
+- 3x-ui and Robokassa credentials
 - Telegram bot token and validated user sessions
 - Happ subscription tokens and VPN share URIs
 - Payment and subscription integrity
@@ -14,7 +14,7 @@
 | Threat | Impact | Initial controls |
 |---|---|---|
 | Forged Telegram initData | Account takeover | Server-side HMAC validation, `auth_date` limit, replay cache |
-| Forged or replayed ENOT webhook | Free or duplicate access | ENOT canonical JSON HMAC validation, constant-time compare, event uniqueness, payment row lock, amount/order/currency checks |
+| Forged or replayed Robokassa ResultURL | Free or duplicate access | Password #2 signature validation, constant-time compare, event uniqueness, payment row lock, amount/order checks |
 | Frontend claims successful payment | Free access | Ignore frontend payment result; activate only from verified webhook |
 | Duplicate provisioning | Multiple 3x-ui clients | Stable external IDs, verify-before-create, advisory locks, no blind create retries |
 | Partial two-protocol provisioning | Broken subscription presented as active | `partial_failed`, background resync, verification of both bindings, manual review threshold |
@@ -50,13 +50,13 @@ client identifiers.
 
 ### Compromised Frontend
 
-Malicious frontend code cannot reach 3x-ui or ENOT credentials. Sensitive decisions,
+Malicious frontend code cannot reach 3x-ui or Robokassa credentials. Sensitive decisions,
 ownership checks, payment validation, token creation, and provisioning remain server-side.
 
 ## Residual Risks To Validate
 
 - Exact 3x-ui authentication and API semantics depend on the installed OpenAPI schema.
-- ENOT webhook signature canonicalization follows the current provider example and must
-  also be confirmed against the first signed staging event before production sales.
+- Robokassa signature algorithm in `.env` must match the merchant cabinet and be
+  confirmed with the first test-mode ResultURL before production sales.
 - Happ deep links and Provider ID behavior must be confirmed from official documentation.
 - Telegram Mini App framing headers must be tested in Telegram clients before deployment.

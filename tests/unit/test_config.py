@@ -47,34 +47,48 @@ class AppSettingsTest(unittest.TestCase):
         with patch.dict(os.environ, environment, clear=True), self.assertRaises(ValueError):
             AppSettings(_env_file=None)  # type: ignore[call-arg]
 
-    def test_enot_payments_require_all_credentials(self) -> None:
-        environment = {**BASE_ENV, "ENABLE_ENOT_PAYMENTS": "true", "ENOT_SHOP_ID": "shop-id"}
+    def test_robokassa_payments_require_all_credentials(self) -> None:
+        environment = {
+            **BASE_ENV,
+            "ENABLE_ROBOKASSA_PAYMENTS": "true",
+            "ROBOKASSA_MERCHANT_LOGIN": "merchant",
+        }
 
         with patch.dict(os.environ, environment, clear=True), self.assertRaises(ValueError):
             AppSettings(_env_file=None)  # type: ignore[call-arg]
 
-    def test_enot_sbp_configuration_is_loaded(self) -> None:
+    def test_robokassa_sbp_configuration_is_loaded(self) -> None:
         environment = {
             **BASE_ENV,
-            "ENABLE_ENOT_PAYMENTS": "true",
-            "ENOT_SHOP_ID": "shop-id",
-            "ENOT_SECRET_KEY": "secret-key",
-            "ENOT_WEBHOOK_ADDITIONAL_KEY": "additional-key",
-            "ENOT_SBP_SERVICE_CODE": "sbp",
+            "ENABLE_ROBOKASSA_PAYMENTS": "true",
+            "ROBOKASSA_MERCHANT_LOGIN": "merchant",
+            "ROBOKASSA_PASSWORD_1": "password-1",
+            "ROBOKASSA_PASSWORD_2": "password-2",
+            "ROBOKASSA_HASH_ALGORITHM": "sha256",
+            "ROBOKASSA_SBP_METHOD": "SBP",
         }
 
         with patch.dict(os.environ, environment, clear=True):
             settings = AppSettings(_env_file=None)  # type: ignore[call-arg]
 
-        self.assertTrue(settings.enable_enot_payments)
-        self.assertEqual(settings.enot_webhook_url, "https://app.example.com/api/webhooks/enot")
+        self.assertTrue(settings.enable_robokassa_payments)
+        self.assertEqual(
+            settings.robokassa_result_url,
+            "https://app.example.com/api/webhooks/robokassa/result",
+        )
 
-    def test_production_enot_api_host_is_allowlisted(self) -> None:
+    def test_production_robokassa_api_host_is_allowlisted(self) -> None:
         environment = {
             **BASE_ENV,
             "APP_ENV": "production",
-            "ENOT_API_BASE_URL": "https://payments.attacker.example",
+            "ROBOKASSA_API_BASE_URL": "https://payments.attacker.example",
         }
+
+        with patch.dict(os.environ, environment, clear=True), self.assertRaises(ValueError):
+            AppSettings(_env_file=None)  # type: ignore[call-arg]
+
+    def test_robokassa_payment_method_is_locked_to_sbp(self) -> None:
+        environment = {**BASE_ENV, "ROBOKASSA_SBP_METHOD": "BankCard"}
 
         with patch.dict(os.environ, environment, clear=True), self.assertRaises(ValueError):
             AppSettings(_env_file=None)  # type: ignore[call-arg]

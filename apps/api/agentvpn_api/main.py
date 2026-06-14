@@ -14,8 +14,8 @@ from apps.api.agentvpn_api.auth.sessions import SessionStore
 from apps.api.agentvpn_api.config import AppSettings
 from apps.api.agentvpn_api.database.session import Database
 from apps.api.agentvpn_api.logging import configure_logging
-from apps.api.agentvpn_api.payments.enot import EnotPaymentProvider
 from apps.api.agentvpn_api.payments.mock import MockPaymentProvider
+from apps.api.agentvpn_api.payments.robokassa import RobokassaPaymentProvider
 from apps.api.agentvpn_api.routers import auth, health, payments, plans, subscriptions
 from apps.api.agentvpn_api.security import SecurityHeadersMiddleware
 
@@ -46,31 +46,32 @@ def create_app() -> FastAPI:
             replay_ttl_seconds=settings.telegram_replay_ttl_seconds,
         )
         app.state.mock_payment_provider = MockPaymentProvider()
-        enot_client: httpx.AsyncClient | None = None
-        app.state.enot_payment_provider = None
-        if settings.enable_enot_payments:
-            shop_id = settings.enot_shop_id
-            secret_key = settings.enot_secret_key
-            if shop_id is None or secret_key is None:
-                raise RuntimeError("ENOT settings validation failed")
-            enot_client = httpx.AsyncClient(
-                base_url=str(settings.enot_api_base_url).rstrip("/"),
+        robokassa_client: httpx.AsyncClient | None = None
+        app.state.robokassa_payment_provider = None
+        if settings.enable_robokassa_payments:
+            merchant_login = settings.robokassa_merchant_login
+            password_1 = settings.robokassa_password_1
+            password_2 = settings.robokassa_password_2
+            if merchant_login is None or password_1 is None or password_2 is None:
+                raise RuntimeError("Robokassa settings validation failed")
+            robokassa_client = httpx.AsyncClient(
+                base_url=str(settings.robokassa_api_base_url).rstrip("/"),
                 timeout=httpx.Timeout(10.0),
                 follow_redirects=False,
             )
-            app.state.enot_payment_provider = EnotPaymentProvider(
-                client=enot_client,
-                shop_id=shop_id,
-                secret_key=secret_key.get_secret_value(),
-                webhook_url=settings.enot_webhook_url,
-                success_url=settings.public_origin,
-                fail_url=settings.public_origin,
-                service_code=settings.enot_sbp_service_code,
-                expire_minutes=settings.enot_payment_expire_minutes,
+            app.state.robokassa_payment_provider = RobokassaPaymentProvider(
+                client=robokassa_client,
+                payment_url=str(settings.robokassa_payment_url),
+                merchant_login=merchant_login,
+                password_1=password_1.get_secret_value(),
+                password_2=password_2.get_secret_value(),
+                hash_algorithm=settings.robokassa_hash_algorithm,
+                sbp_method=settings.robokassa_sbp_method,
+                test_mode=settings.robokassa_test_mode,
             )
         yield
-        if enot_client is not None:
-            await enot_client.aclose()
+        if robokassa_client is not None:
+            await robokassa_client.aclose()
         await redis.aclose()
         await database.dispose()
 

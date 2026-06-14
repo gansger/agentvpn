@@ -32,24 +32,6 @@
         "title": "CheckoutRequest",
         "type": "object"
       },
-      "EnotWebhookResponse": {
-        "properties": {
-          "duplicate": {
-            "title": "Duplicate",
-            "type": "boolean"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          }
-        },
-        "required": [
-          "status",
-          "duplicate"
-        ],
-        "title": "EnotWebhookResponse",
-        "type": "object"
-      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -437,60 +419,6 @@
         ]
       }
     },
-    "/api/checkout/enot": {
-      "post": {
-        "operationId": "enot_checkout_api_checkout_enot_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Idempotency-Key",
-            "required": true,
-            "schema": {
-              "maxLength": 128,
-              "minLength": 8,
-              "title": "Idempotency-Key",
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CheckoutRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaymentResponse"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Enot Checkout",
-        "tags": [
-          "payments"
-        ]
-      }
-    },
     "/api/checkout/mock": {
       "post": {
         "operationId": "mock_checkout_api_checkout_mock_post",
@@ -540,6 +468,60 @@
           }
         },
         "summary": "Mock Checkout",
+        "tags": [
+          "payments"
+        ]
+      }
+    },
+    "/api/checkout/robokassa": {
+      "post": {
+        "operationId": "robokassa_checkout_api_checkout_robokassa_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 8,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Robokassa Checkout",
         "tags": [
           "payments"
         ]
@@ -677,43 +659,41 @@
         ]
       }
     },
-    "/api/webhooks/enot": {
-      "post": {
-        "operationId": "enot_webhook_api_webhooks_enot_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-api-sha256-signature",
-            "required": true,
-            "schema": {
-              "title": "X-Api-Sha256-Signature",
-              "type": "string"
-            }
-          }
-        ],
+    "/api/webhooks/robokassa/result": {
+      "get": {
+        "operationId": "robokassa_result_get_api_webhooks_robokassa_result_get",
         "responses": {
           "200": {
             "content": {
-              "application/json": {
+              "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/EnotWebhookResponse"
+                  "type": "string"
                 }
               }
             },
             "description": "Successful Response"
-          },
-          "422": {
+          }
+        },
+        "summary": "Robokassa Result Get",
+        "tags": [
+          "payments"
+        ]
+      },
+      "post": {
+        "operationId": "robokassa_result_post_api_webhooks_robokassa_result_post",
+        "responses": {
+          "200": {
             "content": {
-              "application/json": {
+              "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "type": "string"
                 }
               }
             },
-            "description": "Validation Error"
+            "description": "Successful Response"
           }
         },
-        "summary": "Enot Webhook",
+        "summary": "Robokassa Result Post",
         "tags": [
           "payments"
         ]

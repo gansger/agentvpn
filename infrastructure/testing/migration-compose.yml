@@ -30,7 +30,7 @@ services:
     command:
       - sh
       - -ec
-      - alembic upgrade head && python infrastructure/scripts/check_stage3_database.py && python infrastructure/scripts/check_stage4_enot_webhook.py && alembic downgrade base && alembic upgrade head
+      - alembic upgrade head && python infrastructure/scripts/check_stage3_database.py && python infrastructure/scripts/check_stage4_robokassa_result.py && alembic downgrade base && alembic upgrade head
     depends_on:
       postgres-test:
         condition: service_healthy

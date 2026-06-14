@@ -19,8 +19,8 @@ flowchart LR
     Admin["Administrator"] --> AdminUI["Admin UI"]
     Telegram --> API["Central FastAPI backend"]
     AdminUI --> API
-    ENOT["ENOT / SBP"] -->|"signed webhook"| API
-    API -->|"server-to-server"| ENOT
+    Robokassa["Robokassa / SBP"] -->|"signed ResultURL"| API
+    API -->|"hosted checkout / status"| Robokassa
     API --> DB[("PostgreSQL")]
     API --> Redis[("Redis / locks / jobs")]
     API --> Worker["Background worker"]
@@ -31,19 +31,19 @@ flowchart LR
 
 ## Trust Boundaries
 
-1. **Public edge:** Telegram webhook, Mini App API, ENOT webhook, and Happ subscription
+1. **Public edge:** Telegram webhook, Mini App API, Robokassa ResultURL, and Happ subscription
    endpoint are internet-facing through the reverse proxy.
 2. **Application network:** API, worker, PostgreSQL, and Redis communicate on a private
    container or host network.
 3. **Provisioning boundary:** only API and worker may reach 3x-ui. The panel must be
    firewalled and allowlisted to backend addresses.
-4. **Payment boundary:** only backend services hold ENOT credentials and verify webhooks.
+4. **Payment boundary:** only backend services hold Robokassa credentials and verify ResultURL.
 5. **Admin boundary:** admin endpoints require explicit RBAC and audited elevated actions.
 
 ## Source Of Truth
 
 PostgreSQL owns users, plans, payments, subscriptions, provisioning state, token state,
-and audit history. 3x-ui is a provisioning engine, not the subscription database. ENOT
+and audit history. 3x-ui is a provisioning engine, not the subscription database. Robokassa
 is authoritative for provider-side payment state, while only a verified and matched
 webhook may activate access.
 
@@ -66,10 +66,10 @@ api/
 
 Business services depend on interfaces:
 
-- `PaymentProvider`, implemented by `MockPaymentProvider` and `EnotPaymentProvider`
+- `PaymentProvider`, implemented by `MockPaymentProvider` and `RobokassaPaymentProvider`
 - `VpnProvisioningProvider`, implemented by `ThreeXUIProvisioningProvider`
 
-All 3x-ui HTTP details remain inside the adapter. All ENOT HTTP and signature details
+All 3x-ui HTTP details remain inside the adapter. All Robokassa HTTP and signature details
 remain inside the payment adapter.
 
 ## Core State Machines

@@ -34,11 +34,11 @@ class DeploymentConfigurationTest(unittest.TestCase):
         self.assertIn("./apps/mini-app/public:/srv/agentvpn-public:ro", content)
         self.assertNotIn("down -v", content)
 
-    def test_public_homepage_contains_enot_verification_inside_head(self) -> None:
+    def test_public_homepage_does_not_expose_old_provider_verification(self) -> None:
         content = PUBLIC_INDEX.read_text(encoding="utf-8")
         head = content.split("<head>", maxsplit=1)[1].split("</head>", maxsplit=1)[0]
 
-        self.assertIn('<meta name="enot" content="9bbe7724" />', head)
+        self.assertNotIn('name="enot"', head)
 
     def test_public_site_contains_moderation_and_mini_app_content(self) -> None:
         content = PUBLIC_INDEX.read_text(encoding="utf-8")
@@ -48,6 +48,7 @@ class DeploymentConfigurationTest(unittest.TestCase):
             self.assertTrue(path.is_file())
         body = content.split("<body>", maxsplit=1)[1]
         self.assertNotIn("ENOT", body)
+        self.assertNotIn("Robokassa", body)
         for text in (
             "Оплата через СБП",
             "Условия оказания услуг",
@@ -65,18 +66,31 @@ class DeploymentConfigurationTest(unittest.TestCase):
         self.assertIn('document.body.classList.add("telegram-mode")', PUBLIC_JS.read_text("utf-8"))
         self.assertIn("body:not(.telegram-mode) .landing", PUBLIC_CSS.read_text("utf-8"))
         for value in (
-            'АНО ЦРМП "Атлант"',
-            "0500025370",
-            "1250500000080",
-            "368297, РД., Акушинский р-он, с Шукты",
+            "Магомедов Гасан-Гусейн",
+            "Самозанятый, плательщик налога на профессиональный доход",
+            "050204720898",
+            "367000, РД., г. Махачкала",
+            "-5539080426",
+            "https://t.me/+927-XyJ49MRlNDU6",
             "+7 964 050-84-90",
             "uu.gg.01@mail.ru",
         ):
             self.assertIn(value, public_info)
-        mini_app = content.split('<section class="mini-app"', maxsplit=1)[1]
-        for private_public_value in ("0500025370", "1250500000080", "368297"):
+        mini_app = content.split('<section class="mini-app"', maxsplit=1)[1].split(
+            "</section>", maxsplit=1
+        )[0]
+        for private_public_value in ("050204720898", "-5539080426", "367000"):
             self.assertNotIn(private_public_value, mini_app)
         self.assertIn('id="mini-support-email"', mini_app)
+        footer = content.split('<footer class="site-footer">', maxsplit=1)[1]
+        for footer_value in (
+            'data-public-field="legalName"',
+            'data-public-field="inn"',
+            'data-public-field="legalAddress"',
+            'data-public-field="supportTelegramId"',
+            'data-public-link="supportTelegramUrl"',
+        ):
+            self.assertIn(footer_value, footer)
 
     def test_clean_migration_test_cannot_remove_production_volumes(self) -> None:
         compose = MIGRATION_COMPOSE_FILE.read_text(encoding="utf-8")
@@ -86,6 +100,13 @@ class DeploymentConfigurationTest(unittest.TestCase):
         self.assertNotIn("volumes:", compose)
         self.assertNotIn("down -v", script)
         self.assertNotIn("down --volumes", script)
+
+    def test_example_environment_uses_robokassa_sbp_only(self) -> None:
+        content = Path(".env.example").read_text(encoding="utf-8")
+
+        self.assertIn("ENABLE_ROBOKASSA_PAYMENTS=false", content)
+        self.assertIn("ROBOKASSA_SBP_METHOD=SBP", content)
+        self.assertNotIn("ENABLE_ENOT_PAYMENTS", content)
 
 
 if __name__ == "__main__":
