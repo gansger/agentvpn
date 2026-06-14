@@ -70,7 +70,6 @@ class DeploymentConfigurationTest(unittest.TestCase):
             "Самозанятый, плательщик налога на профессиональный доход",
             "050204720898",
             "367000, РД., г. Махачкала",
-            "-5539080426",
             "https://t.me/+927-XyJ49MRlNDU6",
             "+7 964 050-84-90",
             "uu.gg.01@mail.ru",
@@ -79,18 +78,22 @@ class DeploymentConfigurationTest(unittest.TestCase):
         mini_app = content.split('<section class="mini-app"', maxsplit=1)[1].split(
             "</section>", maxsplit=1
         )[0]
-        for private_public_value in ("050204720898", "-5539080426", "367000"):
+        for private_public_value in ("050204720898", "367000"):
             self.assertNotIn(private_public_value, mini_app)
         self.assertIn('id="mini-support-email"', mini_app)
-        footer = content.split('<footer class="site-footer">', maxsplit=1)[1]
+        footer = content.split('<footer class="site-footer"', maxsplit=1)[1]
         for footer_value in (
             'data-public-field="legalName"',
             'data-public-field="inn"',
             'data-public-field="legalAddress"',
-            'data-public-field="supportTelegramId"',
+            'data-public-field="supportPhone"',
+            'data-public-field="supportEmail"',
             'data-public-link="supportTelegramUrl"',
         ):
             self.assertIn(footer_value, footer)
+        self.assertNotIn("ID группы", content)
+        self.assertNotIn("-5539080426", content)
+        self.assertNotIn("Реквизиты и поддержка", content)
 
     def test_clean_migration_test_cannot_remove_production_volumes(self) -> None:
         compose = MIGRATION_COMPOSE_FILE.read_text(encoding="utf-8")
