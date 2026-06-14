@@ -26,13 +26,15 @@ nano .env
 
 В `.env` обязательно заполните домен, Telegram-секреты, PostgreSQL, Redis и параметры
 доступа к 3x-ui. `DATABASE_URL` должен содержать тот же пароль, что и
-`POSTGRES_PASSWORD`.
+`POSTGRES_PASSWORD`. `PUBLIC_DOMAIN` указывается только как домен, без `https://`, пути и
+завершающего `/`.
 
 Перед запуском проверьте конфигурацию:
 
 ```bash
 docker compose config --quiet
-docker compose build
+PUBLIC_DOMAIN=ВАШ_ДОМЕН sh infrastructure/scripts/validate_caddy.sh
+docker compose build --pull
 ```
 
 Запустите приложение:
@@ -49,34 +51,42 @@ docker compose ps
 
 ```bash
 docker compose ps
-docker compose logs --tail=100 migrate api caddy
-curl --fail --silent "https://ВАШ_ДОМЕН/health/live"
-curl --fail --silent "https://ВАШ_ДОМЕН/health/ready"
+docker compose logs --no-color --tail=100 migrate api caddy
+curl --fail --silent --show-error "http://ВАШ_ДОМЕН/health/live"
+curl --fail --silent --show-error "https://ВАШ_ДОМЕН/health/live"
+curl --fail --silent --show-error "https://ВАШ_ДОМЕН/health/ready"
+python infrastructure/scripts/smoke_https_health.py --domain ВАШ_ДОМЕН
 docker compose exec api python infrastructure/scripts/check_xui_connection.py
 ```
 
 Ожидаемый ответ `/health/live`: `{"status":"ok"}`. Readiness-проверка должна подтвердить
 доступность PostgreSQL и Redis. Проверка 3x-ui является read-only и не меняет клиентов.
+Caddy получает и продлевает публичный TLS-сертификат автоматически. Для этого DNS должен
+указывать на `APP-SERVER`, TCP-порты `80` и `443` должны быть открыты, а постоянный volume
+`caddy_data` должен сохраняться.
 
 ## Обновление
 
 ```bash
 cd /opt/agent/agentvpn
 git pull --ff-only
-docker compose build
-docker compose up -d
+docker compose build --pull
+docker compose up -d --remove-orphans
 docker compose ps
 ```
 
 Миграции применяются отдельным контейнером до старта новой версии API.
+Не используйте `docker compose down -v`: эта команда удаляет постоянные данные PostgreSQL,
+Redis и сертификаты Caddy.
 
 ## Диагностика
 
 ```bash
 docker compose ps
-docker compose logs --tail=200 api
-docker compose logs --tail=200 migrate
-docker compose logs --tail=200 caddy
+docker compose logs --no-color --tail=200 api
+docker compose logs --no-color --tail=200 migrate
+docker compose logs --no-color --tail=300 caddy
+docker compose exec caddy sh -lc 'echo "PUBLIC_DOMAIN=$PUBLIC_DOMAIN"'
 docker compose exec postgres sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
 docker compose exec redis redis-cli ping
 ```

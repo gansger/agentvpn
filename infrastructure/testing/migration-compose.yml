@@ -1,0 +1,36 @@
+services:
+  postgres-test:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: agentvpn_test
+      POSTGRES_USER: agentvpn_test
+      POSTGRES_PASSWORD: migration-test-password
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentvpn_test -d agentvpn_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  migration-test:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/api.Dockerfile
+    environment:
+      APP_ENV: test
+      PUBLIC_DOMAIN: migration-test.example.com
+      TELEGRAM_BOT_TOKEN: 123456:migration-test-token
+      TELEGRAM_WEBHOOK_SECRET: migration-test-webhook-secret-value-0001
+      SESSION_SECRET: migration-test-session-secret-value-0001
+      CSRF_SECRET: migration-test-csrf-secret-value-000001
+      ADMIN_TELEGRAM_IDS: "1"
+      DATABASE_URL: postgresql+asyncpg://agentvpn_test:migration-test-password@postgres-test:5432/agentvpn_test
+      REDIS_URL: redis://redis-not-required:6379/0
+    command:
+      - sh
+      - -ec
+      - alembic upgrade head && alembic downgrade base && alembic upgrade head
+    depends_on:
+      postgres-test:
+        condition: service_healthy

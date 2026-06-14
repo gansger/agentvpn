@@ -61,6 +61,14 @@ ruff check .
 mypy apps infrastructure tests
 ```
 
+Интеграционные deployment-проверки используют только одноразовые контейнеры и не
+подключают постоянные volumes production-стека:
+
+```bash
+sh infrastructure/scripts/test_clean_postgres_migrations.sh
+PUBLIC_DOMAIN=example.com sh infrastructure/scripts/validate_caddy.sh
+```
+
 После локальной настройки `XUI_BASE_URL` и переменных авторизации:
 
 ```powershell
@@ -121,3 +129,20 @@ AGentVPN и VPN-инфраструктура размещаются раздел
 
 Панель 3x-ui принимает управляющие запросы только с фиксированного IP сервера AGentVPN.
 Пользовательский VPN-трафик не проходит через сервер AGentVPN.
+
+## HTTPS и проверка после деплоя
+
+Caddy автоматически получает и продлевает TLS-сертификат. Для этого `PUBLIC_DOMAIN`
+указывается без `https://` и без пути, DNS A-запись должна указывать на `APP-SERVER`, а
+TCP-порты `80` и `443` должны быть открыты. Сертификаты сохраняются в постоянном Docker
+volume `caddy_data`.
+
+```bash
+curl http://DOMAIN/health/live
+curl https://DOMAIN/health/live
+curl https://DOMAIN/health/ready
+python infrastructure/scripts/smoke_https_health.py --domain DOMAIN
+```
+
+Не выполняйте `docker compose down -v` при обычном обновлении: эта команда удаляет
+постоянные данные PostgreSQL, Redis и сертификаты Caddy.

@@ -1,0 +1,27 @@
+name: Deploy HTTPS smoke
+
+on:
+  workflow_call:
+    inputs:
+      public_domain:
+        description: Public AGentVPN domain without scheme
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      public_domain:
+        description: Public AGentVPN domain without scheme
+        required: true
+        type: string
+
+jobs:
+  https-health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python infrastructure/scripts/smoke_https_health.py --domain "$PUBLIC_DOMAIN"
+        env:
+          PUBLIC_DOMAIN: ${{ inputs.public_domain }}

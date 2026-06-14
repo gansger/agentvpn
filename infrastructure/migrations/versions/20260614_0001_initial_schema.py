@@ -165,8 +165,16 @@ def upgrade() -> None:
         sa.Column("display_name", sa.String(255), nullable=False),
         sa.Column("is_active", sa.Boolean(), server_default=sa.true(), nullable=False),
         *timestamps(),
-        sa.UniqueConstraint("server_id", "external_inbound_id"),
-        sa.UniqueConstraint("server_id", "protocol"),
+        sa.UniqueConstraint(
+            "server_id",
+            "external_inbound_id",
+            name="uq_vpn_inbounds_server_external_id",
+        ),
+        sa.UniqueConstraint(
+            "server_id",
+            "protocol",
+            name="uq_vpn_inbounds_server_protocol",
+        ),
     )
     op.create_table(
         "xui_client_bindings",
@@ -201,7 +209,11 @@ def upgrade() -> None:
         ),
         sa.Column("disabled_at", sa.DateTime(timezone=True)),
         sa.Column("deleted_at", sa.DateTime(timezone=True)),
-        sa.UniqueConstraint("subscription_id", "protocol"),
+        sa.UniqueConstraint(
+            "subscription_id",
+            "protocol",
+            name="uq_xui_bindings_subscription_protocol",
+        ),
     )
     op.create_index(
         "ix_xui_bindings_status_last_synced",
@@ -253,7 +265,11 @@ def upgrade() -> None:
         ),
         sa.Column("processed_at", sa.DateTime(timezone=True)),
         sa.Column("error_message", sa.String(500)),
-        sa.UniqueConstraint("provider", "external_event_key"),
+        sa.UniqueConstraint(
+            "provider",
+            "external_event_key",
+            name="uq_payment_webhook_provider_event",
+        ),
     )
     op.create_index(
         "ix_webhook_events_status_received",

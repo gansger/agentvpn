@@ -215,8 +215,16 @@ class VpnServer(Base):
 class VpnInbound(TimestampMixin, Base):
     __tablename__ = "vpn_inbounds"
     __table_args__ = (
-        UniqueConstraint("server_id", "external_inbound_id"),
-        UniqueConstraint("server_id", "protocol"),
+        UniqueConstraint(
+            "server_id",
+            "external_inbound_id",
+            name="uq_vpn_inbounds_server_external_id",
+        ),
+        UniqueConstraint(
+            "server_id",
+            "protocol",
+            name="uq_vpn_inbounds_server_protocol",
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -230,9 +238,13 @@ class VpnInbound(TimestampMixin, Base):
 class XuiClientBinding(Base):
     __tablename__ = "xui_client_bindings"
     __table_args__ = (
-        UniqueConstraint("subscription_id", "protocol"),
-        UniqueConstraint("external_client_id"),
-        UniqueConstraint("external_email"),
+        UniqueConstraint(
+            "subscription_id",
+            "protocol",
+            name="uq_xui_bindings_subscription_protocol",
+        ),
+        UniqueConstraint("external_client_id", name="uq_xui_bindings_external_client_id"),
+        UniqueConstraint("external_email", name="uq_xui_bindings_external_email"),
         Index("ix_xui_bindings_status_last_synced", "status", "last_synced_at"),
     )
 
@@ -286,7 +298,11 @@ class HappSubscriptionToken(Base):
 class PaymentWebhookEvent(Base):
     __tablename__ = "payment_webhook_events"
     __table_args__ = (
-        UniqueConstraint("provider", "external_event_key"),
+        UniqueConstraint(
+            "provider",
+            "external_event_key",
+            name="uq_payment_webhook_provider_event",
+        ),
         Index("ix_webhook_events_status_received", "processing_status", "received_at"),
     )
 
