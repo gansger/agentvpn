@@ -6,6 +6,8 @@ from pathlib import Path
 CADDYFILE = Path("infrastructure/reverse-proxy/Caddyfile")
 COMPOSE_FILE = Path("docker-compose.yml")
 PUBLIC_INDEX = Path("apps/mini-app/public/index.html")
+PUBLIC_CSS = Path("apps/mini-app/public/app.css")
+PUBLIC_JS = Path("apps/mini-app/public/app.js")
 MIGRATION_COMPOSE_FILE = Path("infrastructure/testing/migration-compose.yml")
 MIGRATION_SCRIPT = Path("infrastructure/scripts/test_clean_postgres_migrations.sh")
 
@@ -16,6 +18,8 @@ class DeploymentConfigurationTest(unittest.TestCase):
 
         self.assertNotIn("email off", content)
         self.assertIn("{$PUBLIC_DOMAIN}", content)
+        self.assertIn("@backend path /api/* /health/*", content)
+        self.assertIn("try_files {path} /index.html", content)
         self.assertIn("reverse_proxy api:8000", content)
 
     def test_compose_keeps_persistent_volumes_and_caddy_healthcheck(self) -> None:
@@ -32,6 +36,20 @@ class DeploymentConfigurationTest(unittest.TestCase):
         head = content.split("<head>", maxsplit=1)[1].split("</head>", maxsplit=1)[0]
 
         self.assertIn('<meta name="enot" content="9bbe7724" />', head)
+
+    def test_public_site_contains_moderation_and_mini_app_content(self) -> None:
+        content = PUBLIC_INDEX.read_text(encoding="utf-8")
+
+        for path in (PUBLIC_CSS, PUBLIC_JS):
+            self.assertTrue(path.is_file())
+        for text in (
+            "Оплата через СБП",
+            "Условия оказания услуг",
+            "Политика конфиденциальности",
+            'data-view="checkout"',
+            'data-view="instructions"',
+        ):
+            self.assertIn(text, content)
 
     def test_clean_migration_test_cannot_remove_production_volumes(self) -> None:
         compose = MIGRATION_COMPOSE_FILE.read_text(encoding="utf-8")

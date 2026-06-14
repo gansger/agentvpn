@@ -2,14 +2,183 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="AGentVPN — безопасный VPN-доступ с оплатой через СБП." />
+    <meta name="theme-color" content="#10131a" />
     <meta name="enot" content="9bbe7724" />
-    <title>AGentVPN</title>
+    <title>AGentVPN — безопасный VPN-доступ</title>
+    <link rel="stylesheet" href="/app.css" />
   </head>
   <body>
-    <main>
-      <h1>AGentVPN</h1>
-      <p>Сервис работает.</p>
+    <svg class="svg-sprite" aria-hidden="true">
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4.5 5v6.2c0 4.7 3 8.9 7.5 10.3 4.5-1.4 7.5-5.6 7.5-10.3V5L12 2Zm0 3.1 4.7 1.8v4.3c0 3.1-1.8 6-4.7 7.3-2.9-1.3-4.7-4.2-4.7-7.3V6.9L12 5.1Zm-1 4v5.8l4.5-2.9L11 9.1Z"/></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Zm3 1.5V18h1v-6h10v6h1v-6.5l-6-4.7-6 4.7Z"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 9h-3a16 16 0 0 0-1.2-5 8 8 0 0 1 4.2 5ZM12 4c.8 1 1.7 3.2 1.9 7h-3.8C10.3 7.2 11.2 5 12 4ZM9.3 6a16 16 0 0 0-1.2 5h-3A8 8 0 0 1 9.3 6ZM5.1 13h3a16 16 0 0 0 1.2 5 8 8 0 0 1-4.2-5Zm6.9 7c-.8-1-1.7-3.2-1.9-7h3.8c-.2 3.8-1.1 6-1.9 7Zm2.7-2a16 16 0 0 0 1.2-5h3a8 8 0 0 1-4.2 5Z"/></symbol>
+      <symbol id="i-card" viewBox="0 0 24 24"><path d="M3 5h18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm0 4h18V7H3v2Zm0 3v5h18v-5H3Zm3 2h6v2H6v-2Z"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-8a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 10c-5 0-9 2.5-9 5.5V22h18v-2.5c0-3-4-5.5-9-5.5Zm-6.8 6c.5-2 3.4-4 6.8-4s6.3 2 6.8 4H5.2Z"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m9.2 16.6-4.4-4.4 1.8-1.8 2.6 2.6 8.2-8.2 1.8 1.8-10 10Z"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m13.2 5.2 6.8 6.8-6.8 6.8-1.4-1.4 4.4-4.4H4v-2h12.2l-4.4-4.4 1.4-1.4Z"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><path d="M8 2h11a2 2 0 0 1 2 2v13h-2V4H8V2ZM5 6h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Zm0 2v12h10V8H5Z"/></symbol>
+    </svg>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="AGentVPN">
+        <span class="brand-mark"><svg><use href="#i-shield"/></svg></span>
+        <span>AGentVPN</span>
+      </a>
+      <nav class="site-nav" aria-label="Основная навигация">
+        <a href="#advantages">Преимущества</a>
+        <a href="#plans">Тарифы</a>
+        <a href="#how">Как подключиться</a>
+        <a href="#support">Поддержка</a>
+      </nav>
+      <a class="button button-small" href="#plans">Выбрать тариф</a>
+    </header>
+
+    <main class="landing" id="top">
+      <section class="hero section">
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="status-dot"></span> Безопасное подключение за пару минут</span>
+          <h1>Свободный интернет.<br /><span>Без лишних настроек.</span></h1>
+          <p>AGentVPN защищает соединение на телефоне и компьютере. Одна подписка открывает два варианта подключения: быстрый Hysteria2 и надёжный VLESS REALITY.</p>
+          <div class="hero-actions">
+            <a class="button" href="#plans">Выбрать тариф <svg><use href="#i-arrow"/></svg></a>
+            <a class="button button-ghost" href="#how">Как это работает</a>
+          </div>
+          <div class="hero-trust">
+            <span><svg><use href="#i-check"/></svg> Оплата через СБП</span>
+            <span><svg><use href="#i-check"/></svg> Настройка в один клик</span>
+            <span><svg><use href="#i-check"/></svg> Поддержка всех устройств</span>
+          </div>
+        </div>
+        <div class="phone-wrap" aria-label="Предпросмотр Mini App">
+          <div class="orb orb-one"></div><div class="orb orb-two"></div>
+          <div class="phone">
+            <div class="phone-top"><span class="mini-brand">◉ AGentVPN</span><span>◔</span></div>
+            <div class="phone-greeting"><small>Добро пожаловать</small><strong>Начните работу с VPN</strong></div>
+            <div class="shield-card">
+              <div class="shield-visual"><span></span><svg><use href="#i-shield"/></svg></div>
+              <strong>Защитите своё подключение</strong>
+              <p>Выберите тариф и подключите VPN за несколько минут</p>
+              <a href="#plans" class="button button-phone">Выбрать тариф <svg><use href="#i-arrow"/></svg></a>
+            </div>
+            <div class="mini-features">
+              <span><b>⚡</b><em>Простая настройка<small>В один клик</small></em></span>
+              <span><b>▣</b><em>Два подключения<small>Одновременно</small></em></span>
+              <span><b>◫</b><em>Любые устройства<small>iOS, Android, PC</small></em></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="trust-strip">
+        <span>Hysteria2 / TLS</span><i></i><span>VLESS / TCP / REALITY</span><i></i><span>Сервер в Германии</span><i></i><span>Защищённая оплата ENOT</span>
+      </section>
+
+      <section class="section" id="advantages">
+        <div class="section-heading"><span class="eyebrow">Почему AGentVPN</span><h2>Технологии внутри.<br />Простота снаружи.</h2><p>Мы убрали сложные настройки и оставили только то, что помогает быстро получить защищённое соединение.</p></div>
+        <div class="feature-grid">
+          <article class="feature-card feature-wide"><div class="feature-icon"><svg><use href="#i-shield"/></svg></div><h3>Два протокола в одной подписке</h3><p>Hysteria2 для высокой скорости и VLESS REALITY как надёжная альтернатива. Выбирайте подходящий вариант прямо в приложении Happ.</p><div class="protocols"><span>Hysteria2 <b>Рекомендуется</b></span><span>VLESS REALITY <b>Альтернатива</b></span></div></article>
+          <article class="feature-card"><div class="feature-icon">⚡</div><h3>Подключение в один клик</h3><p>Добавьте приватную ссылку в Happ один раз. Доступные подключения появятся автоматически.</p></article>
+          <article class="feature-card"><div class="feature-icon">▣</div><h3>Для всех устройств</h3><p>Работает на iPhone, Android, Windows и macOS. Одна подписка поддерживает два подключения.</p></article>
+        </div>
+      </section>
+
+      <section class="section plans-section" id="plans">
+        <div class="section-heading centered"><span class="eyebrow">Тарифы</span><h2>Выберите срок подписки</h2><p>Все тарифы включают Hysteria2 и VLESS REALITY, поддержку устройств и помощь с подключением.</p></div>
+        <div class="plans-grid" id="public-plans">
+          <article class="plan-card"><div><span class="plan-kicker">Базовый</span><h3>1 месяц</h3></div><p class="price"><b>150 ₽</b><small>на 30 дней</small></p><ul><li>Два варианта подключения</li><li>До 2 устройств</li><li>Поддержка всех платформ</li></ul><button class="button choose-plan" data-plan-id="1" data-plan-name="1 месяц" data-plan-price="150">Выбрать</button></article>
+          <article class="plan-card featured"><span class="plan-badge">Популярный</span><div><span class="plan-kicker">Скидка 15%</span><h3>3 месяца</h3></div><p class="price"><b>380 ₽</b><small><s>450 ₽</s> на 90 дней</small></p><ul><li>Два варианта подключения</li><li>До 2 устройств</li><li>Поддержка всех платформ</li></ul><button class="button choose-plan" data-plan-id="2" data-plan-name="3 месяца" data-plan-price="380">Выбрать</button></article>
+          <article class="plan-card"><div><span class="plan-kicker">Скидка 30%</span><h3>12 месяцев</h3></div><p class="price"><b>1260 ₽</b><small><s>1800 ₽</s> на 365 дней</small></p><ul><li>Два варианта подключения</li><li>До 2 устройств</li><li>Поддержка всех платформ</li></ul><button class="button choose-plan" data-plan-id="3" data-plan-name="12 месяцев" data-plan-price="1260">Выбрать</button></article>
+        </div>
+      </section>
+
+      <section class="section" id="how">
+        <div class="section-heading"><span class="eyebrow">Как подключиться</span><h2>Четыре простых шага</h2></div>
+        <div class="steps">
+          <article><b>01</b><h3>Выберите тариф</h3><p>Подберите подходящий срок подписки.</p></article>
+          <article><b>02</b><h3>Оплатите через СБП</h3><p>Платёж проходит на защищённой странице ENOT.</p></article>
+          <article><b>03</b><h3>Установите Happ</h3><p>Доступно для iOS, Android, Windows и macOS.</p></article>
+          <article><b>04</b><h3>Добавьте подписку</h3><p>Откройте приватную ссылку и включите VPN.</p></article>
+        </div>
+      </section>
+
+      <section class="section security">
+        <div><span class="eyebrow">Безопасность</span><h2>Оплата и доступ защищены</h2><p>AGentVPN не хранит данные банковской карты. Оплата через СБП проходит на защищённой странице платёжного сервиса ENOT. Доступ активируется только после подтверждения платежа.</p><div class="security-points"><span><svg><use href="#i-check"/></svg> HTTPS на всех страницах</span><span><svg><use href="#i-check"/></svg> Проверка подписи платежа</span><span><svg><use href="#i-check"/></svg> Приватная ссылка подписки</span></div></div>
+        <div class="security-mark"><svg><use href="#i-shield"/></svg><strong>Защищено</strong><small>AGentVPN + ENOT</small></div>
+      </section>
+
+      <section class="section legal-section" id="support">
+        <div class="section-heading"><span class="eyebrow">Информация о сервисе</span><h2>Поддержка и документы</h2></div>
+        <div class="legal-grid">
+          <article><h3>Поддержка</h3><p>Помогаем с установкой, подключением и оплатой ежедневно через Telegram Mini App.</p><p><b>Сайт:</b> aggvpn05.mooo.com<br /><b>Срок ответа:</b> до 24 часов</p></article>
+          <article id="terms"><h3>Условия оказания услуг</h3><p>Оплата предоставляет ограниченный по времени доступ к VPN-сервису на срок выбранного тарифа. Доступ предназначен для личного использования. Пользователь обязан соблюдать законодательство своей страны.</p><p>Возврат рассматривается службой поддержки, если доступ не был предоставлен по технической причине сервиса.</p></article>
+          <article id="privacy"><h3>Политика конфиденциальности</h3><p>Для работы сервиса обрабатываются Telegram ID, имя профиля, сведения о тарифе и статусе платежа. Данные банковской карты сервис не получает и не хранит. Платёж обрабатывает ENOT.</p><p>Данные используются только для предоставления и поддержки оплаченной услуги.</p></article>
+        </div>
+      </section>
     </main>
+
+    <section class="mini-app" aria-label="AGentVPN Mini App">
+      <header class="mini-header"><button class="icon-button mini-back hidden" aria-label="Назад">←</button><div class="brand"><span class="brand-mark"><svg><use href="#i-shield"/></svg></span><span>AGentVPN</span></div><button class="icon-button" aria-label="Поддержка">◔</button></header>
+      <div class="app-notice" id="app-notice">Демо-режим сайта. Для покупки откройте AGentVPN внутри Telegram.</div>
+
+      <main class="app-view active" data-view="home">
+        <div class="screen-title"><small>Добро пожаловать</small><h1>Начните работу с VPN</h1></div>
+        <div class="app-card app-hero-card"><div class="shield-visual"><span></span><svg><use href="#i-shield"/></svg></div><h2>Защитите своё подключение</h2><p>Выберите тариф и подключите VPN за несколько минут</p><button class="button app-route" data-target="plans">Выбрать тариф <svg><use href="#i-arrow"/></svg></button></div>
+        <p class="section-label">Преимущества</p>
+        <div class="app-list"><div><b>⚡</b><span>Простая настройка<small>В один клик</small></span></div><div><b>▣</b><span>Два подключения<small>Одновременно</small></span></div><div><b>◫</b><span>Поддержка разных устройств<small>iOS, Android, PC</small></span></div></div>
+      </main>
+
+      <main class="app-view" data-view="plans">
+        <div class="screen-title centered"><h1>Выберите тариф</h1><p>Доступ сразу к двум вариантам подключения</p></div>
+        <div class="app-plans" id="app-plans"></div>
+      </main>
+
+      <main class="app-view" data-view="checkout">
+        <div class="screen-title centered"><h1>Оформление заказа</h1></div>
+        <div class="app-card order-card"><small>Детали заказа</small><dl><dt>Тариф</dt><dd id="checkout-plan">3 месяца</dd><dt>Стоимость</dt><dd id="checkout-old-price">380 ₽</dd><dt class="discount">Скидка</dt><dd class="discount" id="checkout-discount">—</dd><dt>Итого к оплате</dt><dd class="total" id="checkout-price">380 ₽</dd></dl></div>
+        <div class="app-card payment-method"><small>Способ оплаты</small><div><span class="sbp-logo">СБП</span><b>СБП<small>Платёж через ENOT</small></b><i>●</i></div></div>
+        <label class="agreement"><input type="checkbox" id="agreement" checked /><span>Я соглашаюсь с <a href="#terms">условиями предоставления услуг</a> и <a href="#privacy">политикой конфиденциальности</a>.</span></label>
+        <button class="button checkout-button" id="checkout-button">Оплатить через СБП <svg><use href="#i-shield"/></svg></button>
+        <p class="payment-note">Откроется защищённая платёжная страница ENOT</p>
+      </main>
+
+      <main class="app-view" data-view="waiting">
+        <div class="waiting-icon">◷</div><div class="screen-title centered"><h1>Проверяем оплату</h1><p>Не закрывайте приложение. Обычно это занимает несколько секунд.</p></div>
+        <div class="app-card wait-card"><span>Заказ</span><b id="waiting-order">создан</b><span>Сумма</span><b id="waiting-price">—</b></div>
+        <button class="button" id="check-payment">Проверить ещё раз</button><button class="text-button app-route" data-target="home">Вернуться на главную</button>
+      </main>
+
+      <main class="app-view" data-view="connection">
+        <div class="screen-title centered"><h1>Подключение</h1><span class="active-chip">Подписка активна</span><p>Настройте безопасное соединение</p></div>
+        <div class="app-card happ-card"><div class="feature-icon">H</div><h2>Подключите VPN через Happ</h2><p>Добавьте подписку один раз — подключения появятся автоматически</p><button class="button">Открыть в Happ</button><button class="button button-ghost"><svg><use href="#i-copy"/></svg> Скопировать ссылку</button><button class="text-button app-route" data-target="instructions">Инструкция по подключению →</button></div>
+        <p class="section-label">В подписке доступны</p><div class="app-list"><div><b>🇩🇪</b><span>Германия — Hysteria2<small>Рекомендуется · TLS</small></span><i>Доступно</i></div><div><b>🇩🇪</b><span>Германия — VLESS<small>Альтернатива · REALITY</small></span><i>Доступно</i></div></div>
+      </main>
+
+      <main class="app-view" data-view="instructions">
+        <div class="screen-title"><small>AGentVPN</small><h1>Как подключиться</h1><p>Процесс занимает пару минут</p></div>
+        <div class="platforms"><span>iPhone</span><span>Android</span><span>Windows</span><span>macOS</span></div>
+        <div class="instruction-steps">
+          <article><b>1</b><div><h2>Установите Happ</h2><p>Скачайте официальное приложение для подключения.</p><button class="button button-ghost">Установить</button></div></article>
+          <article><b>2</b><div><h2>Добавьте подписку</h2><p>Откройте приватную ссылку в приложении или скопируйте её.</p><button class="button">Открыть в Happ</button></div></article>
+          <article><b>3</b><div><h2>Выберите сервер</h2><p>В приложении появятся доступные варианты Hysteria2 и VLESS REALITY.</p></div></article>
+          <article><b>4</b><div><h2>Включите VPN</h2><p>Нажмите большую кнопку подключения в центре приложения.</p></div></article>
+        </div>
+      </main>
+
+      <main class="app-view" data-view="profile">
+        <div class="profile-head"><div class="avatar">A</div><h1 id="profile-name">Профиль</h1><p id="profile-handle">AGentVPN</p></div>
+        <div class="app-card current-plan"><small>Текущий тариф</small><h2 id="profile-plan">Нет активной подписки</h2><span id="profile-status">Выберите тариф, чтобы начать</span><button class="button app-route" data-target="plans">Выбрать тариф</button></div>
+        <p class="section-label">Управление</p><div class="app-list"><div><b>◷</b><span>История платежей</span><i>›</i></div><div><b>?</b><span>Частые вопросы</span><i>›</i></div><div><b>⚙</b><span>Настройки</span><i>›</i></div></div>
+      </main>
+
+      <nav class="app-nav" aria-label="Навигация Mini App"><button class="app-route active" data-target="home"><svg><use href="#i-home"/></svg><span>Главная</span></button><button class="app-route" data-target="connection"><svg><use href="#i-globe"/></svg><span>Подключение</span></button><button class="app-route" data-target="plans"><svg><use href="#i-card"/></svg><span>Тарифы</span></button><button class="app-route" data-target="profile"><svg><use href="#i-user"/></svg><span>Профиль</span></button></nav>
+    </section>
+
+    <div class="site-toast" id="site-toast" role="status">Для оформления заказа откройте AGentVPN внутри Telegram Mini App.</div>
+    <footer class="site-footer"><div class="brand"><span class="brand-mark"><svg><use href="#i-shield"/></svg></span><span>AGentVPN</span></div><p>Безопасный VPN-доступ для личного использования.</p><nav><a href="#terms">Условия услуг</a><a href="#privacy">Конфиденциальность</a><a href="#support">Поддержка</a></nav><small>© 2026 AGentVPN. Все права защищены.</small></footer>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="/app.js" defer></script>
   </body>
 </html>
