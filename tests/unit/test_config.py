@@ -41,6 +41,12 @@ class AppSettingsTest(unittest.TestCase):
 
         self.assertEqual(settings.admin_telegram_ids, (1,))
 
+    def test_mock_payments_are_forbidden_in_production(self) -> None:
+        environment = {**BASE_ENV, "APP_ENV": "production", "ENABLE_MOCK_PAYMENTS": "true"}
+
+        with patch.dict(os.environ, environment, clear=True), self.assertRaises(ValueError):
+            AppSettings(_env_file=None)  # type: ignore[call-arg]
+
 
 if __name__ == "__main__":
     unittest.main()

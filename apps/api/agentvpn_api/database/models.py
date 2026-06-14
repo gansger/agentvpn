@@ -13,6 +13,7 @@ from sqlalchemy import (
     JSON,
     BigInteger,
     Boolean,
+    CheckConstraint,
     DateTime,
     ForeignKey,
     Index,
@@ -129,6 +130,13 @@ class User(TimestampMixin, Base):
 
 class Plan(TimestampMixin, Base):
     __tablename__ = "plans"
+    __table_args__ = (
+        UniqueConstraint("name", name="uq_plans_name"),
+        CheckConstraint("duration_days > 0", name="ck_plans_duration_positive"),
+        CheckConstraint("price >= 0", name="ck_plans_price_nonnegative"),
+        CheckConstraint("char_length(currency) = 3", name="ck_plans_currency_length"),
+        CheckConstraint("device_limit > 0", name="ck_plans_device_limit_positive"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255))
@@ -169,6 +177,13 @@ class Subscription(TimestampMixin, Base):
 class Payment(Base):
     __tablename__ = "payments"
     __table_args__ = (
+        UniqueConstraint(
+            "provider",
+            "provider_invoice_id",
+            name="uq_payments_provider_invoice",
+        ),
+        CheckConstraint("amount >= 0", name="ck_payments_amount_nonnegative"),
+        CheckConstraint("char_length(currency) = 3", name="ck_payments_currency_length"),
         Index("ix_payments_user_created_at", "user_id", "created_at"),
         Index("ix_payments_status_created_at", "status", "created_at"),
     )

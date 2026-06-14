@@ -13,7 +13,8 @@ from apps.api.agentvpn_api.auth.sessions import SessionStore
 from apps.api.agentvpn_api.config import AppSettings
 from apps.api.agentvpn_api.database.session import Database
 from apps.api.agentvpn_api.logging import configure_logging
-from apps.api.agentvpn_api.routers import auth, health
+from apps.api.agentvpn_api.payments.mock import MockPaymentProvider
+from apps.api.agentvpn_api.routers import auth, health, payments, plans, subscriptions
 from apps.api.agentvpn_api.security import SecurityHeadersMiddleware
 
 
@@ -42,13 +43,14 @@ def create_app() -> FastAPI:
             session_ttl_seconds=settings.session_ttl_seconds,
             replay_ttl_seconds=settings.telegram_replay_ttl_seconds,
         )
+        app.state.mock_payment_provider = MockPaymentProvider()
         yield
         await redis.aclose()
         await database.dispose()
 
     app = FastAPI(
         title="AGentVPN API",
-        version="0.2.0",
+        version="0.3.0",
         docs_url=None if settings.app_env == "production" else "/docs",
         redoc_url=None,
         lifespan=lifespan,
@@ -63,4 +65,7 @@ def create_app() -> FastAPI:
     )
     app.include_router(health.router)
     app.include_router(auth.router)
+    app.include_router(plans.router)
+    app.include_router(payments.router)
+    app.include_router(subscriptions.router)
     return app

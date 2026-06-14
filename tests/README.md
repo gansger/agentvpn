@@ -12,7 +12,8 @@ mypy apps infrastructure tests
 ```
 
 Тест миграций создаёт отдельный Compose-проект с чистой PostgreSQL в `tmpfs`, выполняет
-`upgrade → downgrade base → upgrade` и не использует постоянные volumes:
+`upgrade → Stage 3 checkout/idempotency → downgrade base → upgrade` и не использует
+постоянные volumes:
 
 ```bash
 sh infrastructure/scripts/test_clean_postgres_migrations.sh

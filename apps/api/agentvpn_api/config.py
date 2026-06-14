@@ -36,6 +36,7 @@ class AppSettings(BaseSettings):
     cookie_secure: bool = True
     session_cookie_samesite: Literal["lax", "strict", "none"] = "none"
     auth_rate_limit_per_minute: int = Field(default=20, ge=1, le=1000)
+    enable_mock_payments: bool = False
 
     @field_validator("admin_telegram_ids", mode="before")
     @classmethod
@@ -74,6 +75,8 @@ class AppSettings(BaseSettings):
     def validate_production_settings(self) -> AppSettings:
         if self.app_env == "production" and not self.cookie_secure:
             raise ValueError("COOKIE_SECURE must be true in production")
+        if self.app_env == "production" and self.enable_mock_payments:
+            raise ValueError("ENABLE_MOCK_PAYMENTS must be false in production")
         return self
 
     @property

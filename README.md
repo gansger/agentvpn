@@ -4,8 +4,8 @@ Production-oriented Telegram-бот и Mini App для продажи VPN-дос
 существующую установку 3x-ui. Центральный backend является источником истины. Telegram-бот,
 Mini App и панель администратора никогда не обращаются к 3x-ui или ENOT напрямую.
 
-Текущее состояние репозитория соответствует **Этапу 2: backend-основа, база данных и
-безопасная Telegram-аутентификация**.
+Текущее состояние репозитория соответствует **Этапу 3: тарифы, mock-checkout, подписки и
+идемпотентность**.
 
 ## Текущее состояние
 
@@ -25,6 +25,10 @@ Mini App и панель администратора никогда не обр
   Redis-сессии и CSRF.
 - Добавлены SQLAlchemy-модели и начальная Alembic-миграция PostgreSQL.
 - Добавлен production Docker Compose: PostgreSQL, Redis, миграции, API и Caddy.
+- Добавлены `PaymentProvider` и безопасный `MockPaymentProvider` для development/staging.
+- Реализованы тарифы, идемпотентный checkout и просмотр статуса платежа.
+- Реализован UTC-расчёт создания и продления подписки без повторной активации.
+- Добавлена PostgreSQL integration-проверка checkout и повторной обработки успеха.
 
 Endpoints и форматы запросов 3x-ui взяты из OpenAPI фактически установленной панели и
 зафиксированы в `docs/3x-ui-openapi.json`.
@@ -116,7 +120,9 @@ inbound. Она не создаёт и не изменяет клиентов.
 
 Подробности находятся в
 [инструкции по ручным действиям Этапа 1](docs/runbooks/stage-1-owner-actions.md) и
-[инструкции развёртывания Этапа 2](docs/runbooks/stage-2-app-server-deployment.md).
+[инструкции развёртывания Этапа 2](docs/runbooks/stage-2-app-server-deployment.md), а
+настройка тарифов описана в
+[инструкции Этапа 3](docs/runbooks/stage-3-plans-and-mock-payments.md).
 
 ## Production-размещение
 

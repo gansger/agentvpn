@@ -53,6 +53,7 @@ class DatabaseModelsTest(unittest.TestCase):
             "uq_vpn_inbounds_server_protocol",
             "uq_xui_bindings_subscription_protocol",
             "uq_payment_webhook_provider_event",
+            "uq_payments_provider_invoice",
         }
         actual = {
             str(constraint.name)

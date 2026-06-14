@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from apps.api.agentvpn_api.auth.sessions import SessionStore
 from apps.api.agentvpn_api.config import AppSettings
 from apps.api.agentvpn_api.database.session import Database
+from apps.api.agentvpn_api.payments.mock import MockPaymentProvider
 
 
 def settings_from(request: Request) -> AppSettings:
@@ -24,6 +25,10 @@ def redis_from(request: Request) -> Redis:
 
 def session_store_from(request: Request) -> SessionStore:
     return cast(SessionStore, request.app.state.session_store)
+
+
+def mock_payment_provider_from(request: Request) -> MockPaymentProvider:
+    return cast(MockPaymentProvider, request.app.state.mock_payment_provider)
 
 
 async def database_session(request: Request) -> AsyncIterator[AsyncSession]:
